@@ -11,7 +11,7 @@ VERSION=$(shell grep "var Version" $(CURDIR)/shared/version/flex.go | awk -F '"'
 #include /usr/share/dpkg/default.mk
 
 # contains the Go package name which this Debian package is building
-#export DH_GOPKG := github.com/lxc/lxd
+export DH_GOPKG := github.com/lxc/lxd
 # https://golang.org/doc/code.html#GOPATH
 export GOPATH := $(CURDIR)/obj-$(DEB_BUILD_GNU_TYPE)
 # set GOBIN
@@ -51,48 +51,28 @@ ifeq ($(USE_SHARED_LIBS), true)
 # use libs copied from _dist
 else
 	# If we get all dependencies from dist, just copy it onto GOPATH.
-	cp -r _dist/deps ${GOPATH}
+	cp -r _dist/deps $(GOPATH)
 
 	# move lxd source for a moment
-	mv ${GOPATH}/src/github.com/lxc/lxd ${GOPATH}/lxd.tmp
-	cp -r _dist/src ${GOPATH}
+	mv $(GOPATH)/src/github.com/lxc/lxd $(GOPATH)/lxd.tmp
+	cp -r _dist/src $(GOPATH)
 
 	# But not the symlink for lxd.
-	rm -f ${GOPATH}/src/github.com/lxc/lxd
+	rm -f $(GOPATH)/src/github.com/lxc/lxd
 
 	# move it back again
-	mv ${GOPATH}/lxd.tmp ${GOPATH}/src/github.com/lxc/lxd
+	mv $(GOPATH)/lxd.tmp $(GOPATH)/src/github.com/lxc/lxd
 endif
-	rm -rf --one-file-system ${GOPATH}/src/github.com/lxc/lxd/_dist
+	rm -rf --one-file-system $(GOPATH)/src/github.com/lxc/lxd/_dist
 
 	# Copy LXD makefile into proper place
-	cp Makefile ${GOPATH}/src/github.com/lxc/lxd/
+	cp Makefile $(GOPATH)/src/github.com/lxc/lxd/
 
 override_dh_auto_build:
-	#exit 128
 	$(MAKE) deps
 
-	###cd "$(GOPATH)/deps/raft" && \
-	###	autoreconf -i && \
-	###	./configure && \
-	###	make
-
-	###cd "$(GOPATH)/deps/dqlite" && \
-	###	autoreconf -i && \
-	###	PKG_CONFIG_PATH="$(GOPATH)/deps/raft/" ./configure && \
-	###	make CFLAGS="-I$(GOPATH)/deps/raft/include/" LDFLAGS="-L$(GOPATH)/deps/raft/.libs/"
-	###
-	###CC=$(CC) go install -v -tags "sqlite3" $(DEBUG) ./...
-	###CGO_ENABLED=0 go install -v -tags netgo ./lxd-p2c
-	###CGO_ENABLED=0 go install -v -tags agent,netgo ./lxd-agent
-	##env
-        #LD_LIBRARY_PATH="$(GOPATH)/deps/raft/.libs/:$(GOPATH)/deps/dqlite/.libs/"
-	#env | sort
-	$(MAKE) -C ${GOPATH}/src/github.com/lxc/lxd
-	#TAG_SQLITE3="libsqlite3"
-	#env
-	#dh_auto_build
-	#####dh_auto_build -- -tags libsqlite3
+	#$(MAKE) -C $(GOPATH)/src/github.com/lxc/lxd
+	dh_auto_build
 
 override_dh_auto_install:
 	dh_auto_install -- --no-source
