@@ -1,0 +1,107 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+
+# DH verbose mode
+export DH_VERBOSE=1
+
+PKGDIR=debian/tmp
+# get VERSION from upstream source
+VERSION=$(shell grep "var Version" $(CURDIR)/shared/version/flex.go | awk -F '"' '{print $2}')
+
+#include /usr/share/dpkg/default.mk
+
+# contains the Go package name which this Debian package is building
+#export DH_GOPKG := github.com/lxc/lxd
+# https://golang.org/doc/code.html#GOPATH
+export GOPATH := $(CURDIR)/obj-$(DEB_BUILD_GNU_TYPE)
+# set GOBIN
+export GOBIN := $(GOPATH)/bin
+# whether or not use libs in dist/ or system installed
+export USE_SHARED_LIBS := false
+
+# variables output by make deps are copied here
+export CGO_CFLAGS := -I$(GOPATH)/deps/raft/include/ -I$(GOPATH)/deps/dqlite/include/
+export CGO_LDFLAGS := -L$(GOPATH)/deps/raft/.libs -L$(GOPATH)/deps/dqlite/.libs/
+export LD_LIBRARY_PATH := $(GOPATH)/deps/raft/.libs/:$(GOPATH)/deps/dqlite/.libs/
+export CGO_LDFLAGS_ALLOW := -Wl,-wrap,pthread_create
+# path
+export PATH := /usr/sbin:/usr/bin:/sbin:/bin:$(GOBIN)
+
+%:
+	dh $@ --builddirectory=obj-$(DEB_BUILD_GNU_TYPE) --with systemd --buildsystem=golang --with=golang
+
+override_dh_auto_clean:
+	rm -rf --one-file-system $(GOPATH)
+	dh_auto_clean
+
+override_dh_auto_configure:
+	dh_auto_configure
+	# dh-golang's configure has copied the source tree into GOPATH. But
+	# because lxd gets some dependencies from the archive and some from
+	# the copies bundled in dist, we have to unpick a bunch of what it has
+	# done and set it up again.
+
+	# Remove the extra copy of dist dh-golang has copied onto GOPATH (or
+	# when dh-golang tries to run go install github.com/lxc/lxd/... things
+	# get very confused).
+
+# use system installed go libs
+ifeq ($(USE_SHARED_LIBS), true)
+	# TODO not supported yet!
+# use libs copied from _dist
+else
+	# If we get all dependencies from dist, just copy it onto GOPATH.
+	cp -r _dist/deps ${GOPATH}
+
+	# move lxd source for a moment
+	mv ${GOPATH}/src/github.com/lxc/lxd ${GOPATH}/lxd.tmp
+	cp -r _dist/src ${GOPATH}
+
+	# But not the symlink for lxd.
+	rm -f ${GOPATH}/src/github.com/lxc/lxd
+
+	# move it back again
+	mv ${GOPATH}/lxd.tmp ${GOPATH}/src/github.com/lxc/lxd
+endif
+	rm -rf --one-file-system ${GOPATH}/src/github.com/lxc/lxd/_dist
+
+	# Copy LXD makefile into proper place
+	cp Makefile ${GOPATH}/src/github.com/lxc/lxd/
+
+override_dh_auto_build:
+	#exit 128
+	$(MAKE) deps
+
+	###cd "$(GOPATH)/deps/raft" && \
+	###	autoreconf -i && \
+	###	./configure && \
+	###	make
+
+	###cd "$(GOPATH)/deps/dqlite" && \
+	###	autoreconf -i && \
+	###	PKG_CONFIG_PATH="$(GOPATH)/deps/raft/" ./configure && \
+	###	make CFLAGS="-I$(GOPATH)/deps/raft/include/" LDFLAGS="-L$(GOPATH)/deps/raft/.libs/"
+	###
+	###CC=$(CC) go install -v -tags "sqlite3" $(DEBUG) ./...
+	###CGO_ENABLED=0 go install -v -tags netgo ./lxd-p2c
+	###CGO_ENABLED=0 go install -v -tags agent,netgo ./lxd-agent
+	##env
+        #LD_LIBRARY_PATH="$(GOPATH)/deps/raft/.libs/:$(GOPATH)/deps/dqlite/.libs/"
+	#env | sort
+	$(MAKE) -C ${GOPATH}/src/github.com/lxc/lxd
+	#TAG_SQLITE3="libsqlite3"
+	#env
+	#dh_auto_build
+	#####dh_auto_build -- -tags libsqlite3
+
+override_dh_auto_install:
+	dh_auto_install -- --no-source
+
+override_dh_install:
+	exit 128
+override_dh_installinit:
+
+override_dh_systemd_start:
+
+override_dh_auto_test:
+	echo "The testsuite requires privileges and so is run through autopkgtest"
