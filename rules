@@ -18,15 +18,7 @@ export GOPATH := $(CURDIR)/obj-$(DEB_BUILD_GNU_TYPE)
 export GOBIN := $(GOPATH)/bin
 # whether or not use libs in dist/ or system installed
 export USE_BOUNDLED_LIBS := true
-# whether or not use deps in dist/
-export USE_BOUNDLED_DEPS := true
 
-# variables output by make deps are copied here
-export CGO_CFLAGS := -I$(GOPATH)/deps/raft/include/ -I$(GOPATH)/deps/dqlite/include/
-export CGO_LDFLAGS := -L$(GOPATH)/deps/raft/.libs -L$(GOPATH)/deps/dqlite/.libs/
-export LD_LIBRARY_PATH := $(GOPATH)/deps/raft/.libs/:$(GOPATH)/deps/dqlite/.libs/
-export CGO_LDFLAGS_ALLOW := -Wl,-wrap,pthread_create
-# path
 export PATH := /usr/sbin:/usr/bin:/sbin:/bin:$(GOBIN)
 
 %:
@@ -67,12 +59,7 @@ else
 endif
 	rm -rf --one-file-system $(GOPATH)/src/github.com/lxc/lxd/_dist
 
-	# Copy LXD makefile into proper place
-	#cp Makefile $(GOPATH)/src/github.com/lxc/lxd/
-
 override_dh_auto_build:
-	$(MAKE) deps
-	#$(MAKE) -C $(GOPATH)/src/github.com/lxc/lxd
 	dh_auto_build
 
 override_dh_auto_install:
@@ -83,6 +70,11 @@ override_dh_install:
 	# auto generate manpages
 	LD_LIBRARY_PATH=$(CURDIR)/dist/sqlite/.libs/:$(CURDIR)/dist/dqlite/.libs/:${LD_LIBRARY_PATH} $(PKGDIR)/usr/bin/lxd manpage $(PKGDIR)/usr/share/man/man1/
 	$(PKGDIR)/usr/bin/lxc manpage $(PKGDIR)/usr/share/man/man1/
+
+	# Install bash completion scripts
+	mkdir -p $(PKGDIR)/usr/share/bash-completion/completions/
+	cp scripts/bash/lxd-client $(PKGDIR)/usr/share/bash-completion/completions/lxc
+
 	# Trigger normal dh_install
 	dh_install
 
