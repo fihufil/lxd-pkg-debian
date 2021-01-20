@@ -4,9 +4,22 @@ Priority: optional
 Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
 Standards-Version: 4.2.1
 Homepage: https://linuxcontainers.org/
-Vcs-Git: https://github.com/lxc/lxd-pkg-ubuntu
-Vcs-Browser: https://github.com/lxc/lxd-pkg-ubuntu
+Vcs-Git: https://github.com/lxc/lxd
+Vcs-Browser: https://github.com/lxc/lxd
 Build-Depends: debhelper (>= 10),
+               dh-golang,
+               golang-go,
+               help2man,
+               libacl1-dev,
+               libcap-dev,
+               liblxc1,
+               liblxc-dev,
+               libsqlite3-dev,
+               libtool,
+               libudev-dev,
+               libuv1-dev,
+               libraft-dev,
+               libdqlite-dev,
 XS-Go-Import-Path: github.com/lxc/lxd
 
 Package: lxd-client
@@ -25,6 +38,8 @@ Description: Container hypervisor based on LXC - client
 Package: lxd
 Architecture: amd64 arm64 armhf i386 ppc64el s390x
 Depends: adduser,
+         libdqlite0,
+         libraft0,
          ${misc:Depends},
          ${shlibs:Depends}
 Built-Using: ${misc:Built-Using}
