@@ -40,8 +40,9 @@ override_dh_auto_configure:
 	# get very confused).
 
 # use system installed go libs
-ifeq ($(USE_SHARED_LIBS), false)
+ifeq ($(USE_BOUNDLED_LIBS), false)
 	# TODO not supported yet!
+
 # use libs copied from _dist
 else
 	# If we get all dependencies from dist, just copy it onto GOPATH.
