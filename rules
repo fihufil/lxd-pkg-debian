@@ -69,7 +69,7 @@ override_dh_auto_install:
 override_dh_install:
 	mkdir -p $(PKGDIR)/usr/share/man/man1/
 	# auto generate manpages
-	LD_LIBRARY_PATH=$(CURDIR)/dist/sqlite/.libs/:$(CURDIR)/dist/dqlite/.libs/:${LD_LIBRARY_PATH} $(PKGDIR)/usr/bin/lxd manpage $(PKGDIR)/usr/share/man/man1/
+	$(PKGDIR)/usr/bin/lxd manpage $(PKGDIR)/usr/share/man/man1/
 	$(PKGDIR)/usr/bin/lxc manpage $(PKGDIR)/usr/share/man/man1/
 
 	# Install bash completion scripts
