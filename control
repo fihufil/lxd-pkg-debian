@@ -40,6 +40,13 @@ Architecture: amd64 arm64 armhf i386 ppc64el s390x
 Depends: adduser,
          libdqlite0,
          libraft0,
+         dnsmasq-base,
+         ebtables,
+         iproute2,
+         iptables,
+         rsync,
+         squashfs-tools,
+         lxd-client (= ${binary:Version}),
          ${misc:Depends},
          ${shlibs:Depends}
 Built-Using: ${misc:Built-Using}
@@ -53,7 +60,7 @@ Description: Container hypervisor based on LXC - daemon
 
 Package: lxd-tools
 Architecture: amd64 arm64 armhf i386 ppc64el s390x
-Depends: ${misc:Depends}, ${shlibs:Depends}
+Depends: python3, python3-lxc, ${misc:Depends}, ${shlibs:Depends}
 Built-Using: ${misc:Built-Using}
 Description: Container hypervisor based on LXC - extra tools
  LXD offers a REST API to remotely manage containers over the network,
