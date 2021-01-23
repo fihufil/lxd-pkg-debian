@@ -83,6 +83,8 @@ override_dh_installinit:
 	install -d $(CURDIR)/debian/lxd/lib/systemd/system/
 	install $(CURDIR)/debian/lxd.lxd-containers.service $(CURDIR)/debian/lxd/lib/systemd/system/lxd-containers.service
 	dh_installinit
+	# Update arch-specific paths
+	sed -i "s#@LIBEXECDIR@#/usr/lib/${DEB_HOST_MULTIARCH}#g" debian/lxd/lib/systemd/system/lxd.service
 
 #override_dh_systemd_start:
 
