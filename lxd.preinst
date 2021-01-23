@@ -50,7 +50,7 @@ add_user_and_groups() {
 
 case "$1" in
     install|upgrade)
-        add_groups
+        add_user_and_groups
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
