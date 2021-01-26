@@ -4,6 +4,10 @@ LXD debian package
 This repository contains `debian/` directory of source package for LXD.  
 It was derived from `debian/` directory in [lxd-pkg-ubuntu ](https://github.com/lxc/lxd-pkg-ubuntu/) so many thanks to LXD contributors.
 
+# Notes
+
+You will need some packages from `testing` namely: `libdqlite0` and `libraft0` as well as `-dev` packages of thoese libraries.
+
 # Compilation
 
 Download LXD [source release tarball](https://github.com/lxc/lxd/releases).
