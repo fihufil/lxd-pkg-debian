@@ -44,6 +44,8 @@ Now you can build the package!
 dpkg-buildpackage -us -uc
 ```
 
+Enjoy your fresh packages
+
 # TODO
 
 * Allow for go packages to come from debian packages (i.e. use `USE_BOUNDLED_LIBS` in `rules` file)
