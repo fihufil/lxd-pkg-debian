@@ -37,7 +37,7 @@ cd lxd-4.0.4/
 Clone lxd-pkg-debian repository into `debian/`
 
 ```
-git clone https://github.com/rapidrage/lxd-pkg-debian.git debian
+git clone https://github.com/fihufil/lxd-pkg-debian.git debian
 ```
 
 Make sure you have all the build-deps from `debian/control` installed.
