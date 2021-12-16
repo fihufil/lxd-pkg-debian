@@ -1,3 +1,9 @@
+lxd (4.0.4-1rapidrage0) stable; urgency=medium
+
+  * Added missing lxd-agent to lxd package
+
+ -- Filip Dorosz <filip.dorosz@rapidrage.org>  Thu, 16 Dec 2021 23:37:51 +0100
+
 lxd (4.0.4-0rapidrage0) stable; urgency=medium
 
   * Initial package
