@@ -1,2 +1,3 @@
 usr/bin/lxd
+usr/bin/lxd-agent
 usr/share/man/man1/lxd.1
