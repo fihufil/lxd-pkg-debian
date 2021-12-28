@@ -1,3 +1,4 @@
 usr/bin/lxd
 usr/bin/lxd-agent
+usr/bin/lxd-p2c
 usr/share/man/man1/lxd.1
