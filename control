@@ -7,7 +7,6 @@ Homepage: https://linuxcontainers.org/
 Vcs-Git: https://github.com/lxc/lxd
 Vcs-Browser: https://github.com/lxc/lxd
 Build-Depends: debhelper (>= 10),
-               dh-golang,
                golang-go,
                help2man,
                libacl1-dev,
@@ -47,6 +46,9 @@ Depends: adduser,
          rsync,
          squashfs-tools,
          attr,
+         qemu-kvm,
+         ovmf,
+         zstd,
          lxd-client (= ${binary:Version}),
          ${misc:Depends},
          ${shlibs:Depends}
