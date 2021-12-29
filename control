@@ -46,6 +46,7 @@ Depends: adduser,
          iptables,
          rsync,
          squashfs-tools,
+         attr,
          lxd-client (= ${binary:Version}),
          ${misc:Depends},
          ${shlibs:Depends}
