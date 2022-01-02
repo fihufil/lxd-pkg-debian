@@ -1,3 +1,9 @@
+lxd (4.21-0rapidrage0) stable; urgency=medium
+
+  * Bumped version to 4.21
+
+ -- Filip Dorosz <filip.dorosz@rapidrage.org>  Sun, 02 Jan 2022 12:22:57 +0000
+
 lxd (4.0.8-0rapidrage0) stable; urgency=medium
 
   * Bumped version to 4.0.8 and switched to using go modules while
