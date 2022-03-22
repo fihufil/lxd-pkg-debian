@@ -19,9 +19,14 @@ export GOPATH := $(CURDIR)/obj-$(DEB_BUILD_GNU_TYPE)
 export GOBIN := $(GOPATH)/bin
 # -mod vendor makes go use modules from vendor directory
 export GOFLAGS=-mod=vendor
-# whether or not use libs in dist/ or system installed
 
-export PATH := /usr/sbin:/usr/bin:/sbin:/bin:$(GOBIN)
+export PATH := /usr/sbin:/usr/bin:/sbin:/bin:/usr/lib/go-1.17/bin:$(GOBIN)
+
+# used to build LXD against bundled libraft and libdqlite
+export CGO_CFLAGS=-I$(CURDIR)/vendor/raft/include/ -I$(CURDIR)/vendor/dqlite/include/
+export CGO_LDFLAGS=-L$(CURDIR)/vendor/raft/.libs -L$(CURDIR)/vendor/dqlite/.libs/
+export LD_LIBRARY_PATH=$(CURDIR)/vendor/raft/.libs/:$(CURDIR)/vendor/dqlite/.libs/
+export CGO_LDFLAGS_ALLOW=(-Wl,-wrap,pthread_create)|(-Wl,-z,now)
 
 %:
 	dh $@ --builddirectory=obj-$(DEB_BUILD_GNU_TYPE) --with systemd
@@ -34,12 +39,18 @@ override_dh_auto_configure:
 	echo "There is no need to run dh_auto_configure when using go modules"
 
 override_dh_auto_build:
+	# first lets build LXD deps
+	$(MAKE) deps
 	# just use Makefile provided by LXD for building
 	$(MAKE)
 
 override_dh_auto_install:
 	mkdir -p debian/tmp/usr
+	mkdir -p debian/tmp/usr/lib/$(DEB_BUILD_GNU_TYPE)
 	cp -r $(GOBIN) debian/tmp/usr
+	cp --preserve=links $(CURDIR)/vendor/raft/.libs/* debian/tmp/usr/lib/$(DEB_BUILD_GNU_TYPE)/
+	cp --preserve=links $(CURDIR)/vendor/dqlite/.libs/* debian/tmp/usr/lib/$(DEB_BUILD_GNU_TYPE)/
+
 	dh_auto_install -- --no-source
 
 override_dh_install:

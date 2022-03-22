@@ -7,7 +7,6 @@ Homepage: https://linuxcontainers.org/
 Vcs-Git: https://github.com/lxc/lxd
 Vcs-Browser: https://github.com/lxc/lxd
 Build-Depends: debhelper (>= 10),
-               golang-go,
                help2man,
                libacl1-dev,
                libcap-dev,
@@ -17,8 +16,8 @@ Build-Depends: debhelper (>= 10),
                libtool,
                libudev-dev,
                libuv1-dev,
-               libraft-dev,
-               libdqlite-dev,
+               golang-1.17-go,
+               liblz4-dev,
 XS-Go-Import-Path: github.com/lxc/lxd
 
 Package: lxd-client
@@ -37,8 +36,9 @@ Description: Container hypervisor based on LXC - client
 Package: lxd
 Architecture: amd64 arm64 armhf i386 ppc64el s390x
 Depends: adduser,
-         libdqlite0,
-         libraft0,
+         lxd-libraft (= ${binary:Version}),
+         lxd-libdqlite (= ${binary:Version}),
+         lxd-client (= ${binary:Version}),
          dnsmasq-base,
          ebtables,
          iproute2,
@@ -49,7 +49,6 @@ Depends: adduser,
          qemu-kvm,
          ovmf,
          zstd,
-         lxd-client (= ${binary:Version}),
          ${misc:Depends},
          ${shlibs:Depends}
 Built-Using: ${misc:Built-Using}
@@ -73,3 +72,19 @@ Description: Container hypervisor based on LXC - extra tools
   - fuidshift - A tool to map/unmap filesystem uids/gids
   - lxc-to-lxd - A tool to migrate LXC containers to LXD
   - lxd-benchmark - A benchmarking tool for LXD
+
+Package: lxd-libraft
+Architecture: amd64 arm64 armhf i386 ppc64el s390x
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Built-Using: libuv1-dev, liblz4-dev
+Conflicts: libraft0, libraft-dev
+Description: C implementation of the Raft consensus protocol 
+ Fully asynchronous C implementation of the Raft consensus protocol.
+
+Package: lxd-libdqlite
+Architecture: amd64 arm64 armhf i386 ppc64el s390x
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Built-Using: libuv1-dev, libsqlite3-dev
+Conflicts: libdqlite0, libdqlite-dev
+Description: Embeddable, replicated and fault tolerant SQL engine. 
+ dqlite is a C library that implements an embeddable and replicated SQL database engine with high-availability and automatic failover.

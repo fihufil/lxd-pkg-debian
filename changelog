@@ -1,3 +1,10 @@
+lxd (4.24-0rapidrage0) stable; urgency=medium
+
+  * Bumped version to 4.24
+  * Added building of bundled raft and dqlite
+
+ -- Filip Dorosz <filip.dorosz@rapidrage.org>  Sun, 20 Mar 2022 17:18:48 +0000
+
 lxd (4.21-0rapidrage0) stable; urgency=medium
 
   * Bumped version to 4.21
